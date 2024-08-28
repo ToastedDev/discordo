@@ -22,9 +22,10 @@ public class AdvancementMixin {
         if(Discordo.INSTANCE == null) return;
         final Advancement advancement = advancementEntry.value();
         if(advancement != null && advancement.display().isPresent() && advancement.display().get().shouldAnnounceToChat()) {
-            String message = "🏅 " + owner.getName().getString() + " has made the advancement **" +
-                    advancement.display().get().getTitle().getString() + "**\n-# " +
-                    advancement.display().get().getDescription().getString();
+            String message = Discordo.INSTANCE.config.messages.advancement
+                .replace("%name%", owner.getName().getString())
+                .replace("%advancement.name%", advancement.display().get().getTitle().getString())
+                .replace("%advancement.description%", advancement.display().get().getDescription().getString());
             if(Discordo.INSTANCE.config.webhookEnabled) {
                 Discordo.INSTANCE.webhook
                     .sendMessage(message)

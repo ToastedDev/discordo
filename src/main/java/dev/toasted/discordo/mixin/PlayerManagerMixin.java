@@ -17,7 +17,8 @@ public class PlayerManagerMixin {
     private void onPlayerJoin(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo info) {
         if(Discordo.INSTANCE == null) return;
 
-        String message = "➡️ " + player.getName().getString() + " has joined the game";
+        String message = Discordo.INSTANCE.config.messages.join
+            .replace("%name%", player.getName().getString());
 
         if(Discordo.INSTANCE.config.webhookEnabled) {
             Discordo.INSTANCE.webhook

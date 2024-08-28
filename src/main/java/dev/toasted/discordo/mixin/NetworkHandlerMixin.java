@@ -20,7 +20,8 @@ public class NetworkHandlerMixin {
     private void onPlayerLeave(DisconnectionInfo info, CallbackInfo ci) {
         if(Discordo.INSTANCE == null) return;
 
-        String message = "⬅️ " + player.getName().getString() + " has left the game";
+        String message = Discordo.INSTANCE.config.messages.leave
+            .replace("%name", player.getName().getString());
 
         if(Discordo.INSTANCE.config.webhookEnabled) {
             Discordo.INSTANCE.webhook

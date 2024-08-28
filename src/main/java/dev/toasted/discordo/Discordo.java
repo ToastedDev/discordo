@@ -92,20 +92,22 @@ public class Discordo implements ModInitializer {
         });
 
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
-            if(entity instanceof PlayerEntity) {
-                if(config.webhookEnabled) {
-                    webhook
-                        .sendMessage("💀 " + source.getDeathMessage(entity).getString())
-                        .setUsername(entity.getName().getString())
-                        .setAvatarUrl("https://crafthead.net/avatar/" + entity.getUuidAsString())
-                        .setAllowedMentions(Constants.AllowedMentions)
-                        .queue();
-                } else {
-                    channel
-                        .sendMessage("💀 " + source.getDeathMessage(entity).getString())
-                        .setAllowedMentions(Constants.AllowedMentions)
-                        .queue();
-                }
+            if(!(entity instanceof PlayerEntity)) return;
+
+            String message = config.messages.death.replace("%deathMessage%", source.getDeathMessage(entity).getString())
+
+            if(config.webhookEnabled) {
+                webhook
+                    .sendMessage(message)
+                    .setUsername(entity.getName().getString())
+                    .setAvatarUrl("https://crafthead.net/avatar/" + entity.getUuidAsString())
+                    .setAllowedMentions(Constants.AllowedMentions)
+                    .queue();
+            } else {
+                channel
+                    .sendMessage(message)
+                    .setAllowedMentions(Constants.AllowedMentions)
+                    .queue();
             }
         });
 

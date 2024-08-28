@@ -59,7 +59,19 @@ public class Config {
     public Messages messages = new Messages();
 
     public static class Messages {
-        // TODO: add configuration for other messages (chat, advancements, deaths, etc.)
+        // TODO: add configuration for chat
+
+        @TomlComment({"The message that will be sent when a player receives an advancement"})
+        public String advancement = "🏅 %name% has made the advancement **%advancement.name%**\n-# %advancement.description%";
+
+        @TomlComment({"The message that will be sent when a player dies"})
+        public String death = "🪦 %deathMessage%";
+
+        @TomlComment({"The message that will be sent when a player joins the server"})
+        public String join = "➡️ %name% has joined the game";
+
+        @TomlComment({"The message that will be sent when a player leaves the server"})
+        public String leave = "⬅️ %name% has left the game";
 
         @TomlComment({"The message that will be sent when the server is starting"})
         public String serverStarting = "Server starting...";
