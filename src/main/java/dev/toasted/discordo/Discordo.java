@@ -24,6 +24,7 @@ import java.util.Objects;
 public class Discordo implements ModInitializer {
     public static final String MOD_ID = "discordo";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static Discordo INSTANCE;
     public final Config config = ConfigBuilder.builder(Config::new)
         .path(
             Path.of(".")
@@ -36,11 +37,12 @@ public class Discordo implements ModInitializer {
         .strict(true)
         .saveAfterBuild(true)
         .build();
-    private TextChannel channel = null;
-    private Webhook webhook = null;
+    public static TextChannel channel;
+    public static Webhook webhook;
 
     @Override
     public void onInitialize() {
+        Discordo.INSTANCE = this;
         if(Objects.equals(config.discordToken.get(), "")) {
             LOGGER.error("No Discord token specified. Please specify your bot's Discord token in config/discordo/config.properties.");
         } else {
@@ -105,7 +107,7 @@ public class Discordo implements ModInitializer {
                             .queue();
                 } else {
                     channel
-                            .sendMessage(source.getDeathMessage(entity).getString())
+                            .sendMessage("💀 " + source.getDeathMessage(entity).getString())
                             .queue();
                 }
             }
