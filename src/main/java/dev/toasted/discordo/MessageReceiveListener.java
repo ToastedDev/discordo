@@ -18,8 +18,6 @@ public class MessageReceiveListener extends ListenerAdapter {
         if(event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId())) return;
         if((event.getMessage().getType() != MessageType.DEFAULT) && (event.getMessage().getType() != MessageType.INLINE_REPLY)) return;
 
-        Discordo.LOGGER.info("Recieved message: " + event.getMessage().getContentRaw());
-
         this.discordToMcLink.messageReceivedEvent = event;
         this.discordToMcLink.hasReceivedMessage = true;
     }
