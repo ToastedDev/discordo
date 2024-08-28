@@ -23,7 +23,7 @@ public class AdvancementMixin {
         final Advancement advancement = advancementEntry.value();
         if(advancement != null && advancement.display().isPresent() && advancement.display().get().shouldAnnounceToChat()) {
             String message = "🏅 " + owner.getName().getString() + " has made the advancement **" +
-                    advancement.display().get().getTitle().getString() + "**\n-#" +
+                    advancement.display().get().getTitle().getString() + "**\n-# " +
                     advancement.display().get().getDescription().getString();
             if(Discordo.INSTANCE.config.webhookEnabled.get()) {
                 Discordo.INSTANCE.webhook
