@@ -3,10 +3,12 @@ package dev.toasted.discordo;
 import de.maxhenkel.configbuilder.ConfigBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import org.slf4j.Logger;
@@ -49,6 +51,7 @@ public class Discordo implements ModInitializer {
     }
 
     public static final DiscordToMinecraftLink discordToMcLink = new DiscordToMinecraftLink();
+    private Message serverStartMessage;
 
     public void initializeDiscord() throws InterruptedException {
         // TODO: add slash commands
@@ -90,6 +93,20 @@ public class Discordo implements ModInitializer {
             }
         });
 
+        ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
+            serverStartMessage =
+                channel.sendMessage(config.serverStartingMessage.get())
+                    .complete();
+        });
+
+        ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
+            serverStartMessage.editMessage(config.serverStartedMessage.get()).queue();
+        });
+
+        ServerLifecycleEvents.SERVER_STOPPED.register((server) -> {
+           channel.sendMessage(config.serverStoppedMessage.get()).queue();
+           jda.shutdown();
+        });
 
         ServerTickEvents.START_SERVER_TICK.register(discordToMcLink::serverTick);
     }

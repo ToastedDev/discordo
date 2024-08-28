@@ -7,6 +7,9 @@ public class Config {
     public final ConfigEntry<String> discordToken;
     public final ConfigEntry<String> channelId;
     public final ConfigEntry<Boolean> webhookEnabled;
+    public final ConfigEntry<String> serverStartingMessage;
+    public final ConfigEntry<String> serverStartedMessage;
+    public final ConfigEntry<String> serverStoppedMessage;
 
     public Config(ConfigBuilder builder) {
         builder.header(
@@ -21,5 +24,14 @@ public class Config {
         webhookEnabled = builder
             .booleanEntry("webhook_enabled", false)
             .comment("Whether or not messages should be sent through a webhook with the player's name and skin");
+        serverStartingMessage = builder
+            .stringEntry("server_starting_message", "Server starting...")
+            .comment("The message that will be sent when the server is starting");
+        serverStartedMessage = builder
+            .stringEntry("server_started_message", "Server started!")
+            .comment("The message that will be sent when the server has started");
+        serverStoppedMessage = builder
+            .stringEntry("server_stopped_message", "Server has stopped.")
+            .comment("The message that will be sent when the server stops");
     }
 }
