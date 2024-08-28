@@ -8,9 +8,11 @@ import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
+import net.minecraft.entity.player.PlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +92,22 @@ public class Discordo implements ModInitializer {
                 channel
                     .sendMessage(sender.getName().getString() + ": " + message.getContent().getString())
                     .queue();
+            }
+        });
+
+        ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
+            if(entity instanceof PlayerEntity) {
+                if(config.webhookEnabled.get()) {
+                    webhook
+                            .sendMessage("💀 " + source.getDeathMessage(entity).getString())
+                            .setUsername(entity.getName().getString())
+                            .setAvatarUrl("https://crafthead.net/avatar/" + entity.getUuidAsString())
+                            .queue();
+                } else {
+                    channel
+                            .sendMessage(source.getDeathMessage(entity).getString())
+                            .queue();
+                }
             }
         });
 
