@@ -1,37 +1,73 @@
 package dev.toasted.discordo;
 
-import de.maxhenkel.configbuilder.ConfigBuilder;
-import de.maxhenkel.configbuilder.entry.ConfigEntry;
+import com.moandjiezana.toml.Toml;
+import com.moandjiezana.toml.TomlComment;
+import com.moandjiezana.toml.TomlIgnore;
+import com.moandjiezana.toml.TomlWriter;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+
+@SuppressWarnings("unused")
 public class Config {
-    public final ConfigEntry<String> discordToken;
-    public final ConfigEntry<String> channelId;
-    public final ConfigEntry<Boolean> webhookEnabled;
-    public final ConfigEntry<String> serverStartingMessage;
-    public final ConfigEntry<String> serverStartedMessage;
-    public final ConfigEntry<String> serverStoppedMessage;
+    @TomlIgnore
+    public static File configFile = new File(
+        String.valueOf(
+            Path.of(".")
+                .resolve("config")
+                .resolve(Constants.ModId)
+                .resolve("config.toml")
+        )
+    );
 
-    public Config(ConfigBuilder builder) {
-        builder.header(
-            "Discordo config version 1.0.0"
-        );
-        discordToken = builder
-            .stringEntry("discord_token", "")
-            .comment("The Discord bot token that the mod will use to connect to Discord and send messages");
-        channelId = builder
-            .stringEntry("channel_id", "")
-            .comment("The ID of the channel where Minecraft messages will be sent and vice versa");
-        webhookEnabled = builder
-            .booleanEntry("webhook_enabled", false)
-            .comment("Whether or not messages should be sent through a webhook with the player's name and skin");
-        serverStartingMessage = builder
-            .stringEntry("server_starting_message", "Server starting...")
-            .comment("The message that will be sent when the server is starting");
-        serverStartedMessage = builder
-            .stringEntry("server_started_message", "Server started!")
-            .comment("The message that will be sent when the server has started");
-        serverStoppedMessage = builder
-            .stringEntry("server_stopped_message", "Server has stopped.")
-            .comment("The message that will be sent when the server stops");
+    public static Config loadConfig() throws IOException {
+        if(!configFile.exists()) {
+            Config config = new Config();
+            config.saveConfig();
+            return config;
+        }
+        Config config = new Toml().read(configFile).to(Config.class);
+        config.saveConfig();
+        return config;
+    }
+
+    @SuppressWarnings({"ResultOfMethodCallIgnored", "DuplicatedCode"})
+    public void saveConfig() throws IOException {
+        if (!configFile.exists()) {
+            if (!configFile.getParentFile().exists()) configFile.getParentFile().mkdirs();
+            configFile.createNewFile();
+        }
+        final TomlWriter w = new TomlWriter.Builder()
+            .indentValuesBy(2)
+            .indentTablesBy(4)
+            .padArrayDelimitersBy(2)
+            .build();
+        w.write(this, configFile);
+    }
+
+    @TomlComment({"Insert your Discord bot token here", "DO NOT SHARE THIS WITH ANYONE!"})
+    public String discordToken = "REPLACE THIS WITH YOUR BOT TOKEN";
+
+    @TomlComment({"The ID of the channel where Minecraft messages will be sent and vice versa"})
+    public String channelId = "00000000";
+
+    @TomlComment({"Whether or not messages should be sent through a webhook with the player's name and skin"})
+    public Boolean webhookEnabled = false;
+
+    @TomlComment({"Configure the messages that are sent to Discord"})
+    public Messages messages = new Messages();
+
+    public static class Messages {
+        // TODO: add configuration for other messages (chat, advancements, deaths, etc.)
+
+        @TomlComment({"The message that will be sent when the server is starting"})
+        public String serverStarting = "Server starting...";
+
+        @TomlComment({"The message that will be sent when the server has started"})
+        public String serverStarted = "Server has started!";
+
+        @TomlComment({"The message that will be sent when the server stops"})
+        public String serverStopped = "Server has stopped.";
     }
 }

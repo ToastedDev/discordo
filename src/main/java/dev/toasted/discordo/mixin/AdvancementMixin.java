@@ -25,7 +25,7 @@ public class AdvancementMixin {
             String message = "🏅 " + owner.getName().getString() + " has made the advancement **" +
                     advancement.display().get().getTitle().getString() + "**\n-# " +
                     advancement.display().get().getDescription().getString();
-            if(Discordo.INSTANCE.config.webhookEnabled.get()) {
+            if(Discordo.INSTANCE.config.webhookEnabled) {
                 Discordo.INSTANCE.webhook
                     .sendMessage(message)
                     .setUsername(owner.getName().getString())

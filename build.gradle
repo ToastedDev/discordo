@@ -28,9 +28,10 @@ repositories {
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
     maven {
-        name = 'henkelmax.public'
-        url = 'https://maven.maxhenkel.de/repository/public'
+        name 'm2-dv8tion'
+        url 'https://m2.dv8tion.net/releases'
     }
+    maven { url 'https://jitpack.io' }
     mavenCentral()
 }
 
@@ -43,8 +44,8 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    // Config builder
-    implementation 'de.maxhenkel.configbuilder:configbuilder:2.0.1'
+    // TOML (for config)
+    implementation "de.erdbeerbaerlp:toml4j:2073e86"
 
     // Discord
     implementation "net.dv8tion:JDA:5.1.0"
