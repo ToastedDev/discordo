@@ -90,7 +90,8 @@ public class Discordo implements ModInitializer {
             }
         });
 
-        ServerTickEvents.START_SERVER_TICK.register(discordBot::serverTick);
+
+        ServerTickEvents.START_SERVER_TICK.register(discordToMcLink::serverTick);
     }
 
     public Webhook getWebhook(TextChannel channel) {
