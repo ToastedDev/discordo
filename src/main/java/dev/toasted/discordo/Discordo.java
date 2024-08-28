@@ -5,9 +5,11 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.minecraft.util.ActionResult;
 import org.slf4j.Logger;
@@ -49,9 +51,15 @@ public class Discordo implements ModInitializer {
         }
     }
 
+    public static final DiscordBot discordBot = new DiscordBot();
+
     public void initializeDiscord() throws InterruptedException {
         // TODO: add slash commands
-        JDA jda = JDABuilder.createLight(config.discordToken.get())
+        JDA jda = JDABuilder.createLight(
+            config.discordToken.get(),
+            EnumSet.of(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
+        )
+            .addEventListeners(new MessageReceiveListener(discordBot))
             .build();
 
         jda.awaitReady();
@@ -84,6 +92,8 @@ public class Discordo implements ModInitializer {
                     .queue();
             }
         });
+
+        ServerTickEvents.START_SERVER_TICK.register(discordBot::serverTick);
     }
 
     public Webhook getWebhook(TextChannel channel) {
