@@ -1,5 +1,6 @@
 package dev.toasted.discordo.mixin;
 
+import dev.toasted.discordo.Constants;
 import dev.toasted.discordo.Discordo;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementEntry;
@@ -29,10 +30,12 @@ public class AdvancementMixin {
                     .sendMessage(message)
                     .setUsername(owner.getName().getString())
                     .setAvatarUrl("https://crafthead.net/avatar/" + owner.getUuidAsString())
+                    .setAllowedMentions(Constants.AllowedMentions)
                     .queue();
             } else {
                 Discordo.INSTANCE.channel
                     .sendMessage(message)
+                    .setAllowedMentions(Constants.AllowedMentions)
                     .queue();
             }
         }

@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.minecraft.entity.player.PlayerEntity;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,10 +90,12 @@ public class Discordo implements ModInitializer {
                     .sendMessage(message.getContent().getString())
                     .setUsername(sender.getName().getString())
                     .setAvatarUrl("https://crafthead.net/avatar/" + sender.getUuidAsString())
+                    .setAllowedMentions(Constants.AllowedMentions)
                     .queue();
             } else {
                 channel
                     .sendMessage(sender.getName().getString() + ": " + message.getContent().getString())
+                    .setAllowedMentions(Constants.AllowedMentions)
                     .queue();
             }
         });
@@ -101,37 +104,47 @@ public class Discordo implements ModInitializer {
             if(entity instanceof PlayerEntity) {
                 if(config.webhookEnabled.get()) {
                     webhook
-                            .sendMessage("💀 " + source.getDeathMessage(entity).getString())
-                            .setUsername(entity.getName().getString())
-                            .setAvatarUrl("https://crafthead.net/avatar/" + entity.getUuidAsString())
-                            .queue();
+                        .sendMessage("💀 " + source.getDeathMessage(entity).getString())
+                        .setUsername(entity.getName().getString())
+                        .setAvatarUrl("https://crafthead.net/avatar/" + entity.getUuidAsString())
+                        .setAllowedMentions(Constants.AllowedMentions)
+                        .queue();
                 } else {
                     channel
-                            .sendMessage("💀 " + source.getDeathMessage(entity).getString())
-                            .queue();
+                        .sendMessage("💀 " + source.getDeathMessage(entity).getString())
+                        .setAllowedMentions(Constants.AllowedMentions)
+                        .queue();
                 }
             }
         });
 
         ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
             serverStartMessage =
-                channel.sendMessage(config.serverStartingMessage.get())
+                channel
+                    .sendMessage(config.serverStartingMessage.get())
+                    .setAllowedMentions(Constants.AllowedMentions)
                     .complete();
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
-            serverStartMessage.editMessage(config.serverStartedMessage.get()).queue();
+            serverStartMessage
+                .editMessage(config.serverStartedMessage.get())
+                .setAllowedMentions(Constants.AllowedMentions)
+                .queue();
         });
 
         ServerLifecycleEvents.SERVER_STOPPED.register((server) -> {
-           channel.sendMessage(config.serverStoppedMessage.get()).queue();
+           channel
+               .sendMessage(config.serverStoppedMessage.get())
+               .setAllowedMentions(Constants.AllowedMentions)
+               .queue();
            jda.shutdown();
         });
 
         ServerTickEvents.START_SERVER_TICK.register(discordToMcLink::serverTick);
     }
 
-    public Webhook getWebhook(TextChannel channel) {
+    private Webhook getWebhook(TextChannel channel) {
         List<Webhook> webhooks = channel.retrieveWebhooks().complete();
         for(Webhook webhook: webhooks) {
             if(webhook.getName().equals("Minecraft Chat Link")) {
