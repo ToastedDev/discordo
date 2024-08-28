@@ -5,7 +5,10 @@
   "name": "Discordo",
   "description": "",
   "authors": [],
-  "contact": {},
+  "contact": {
+    "issues": "https://github.com/ToastedDev/discordo/issues",
+    "sources": "https://github.com/ToastedDev/discordo"
+  },
   "license": "MIT",
   "icon": "assets/discordo/icon.png",
   "environment": "server",
