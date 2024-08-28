@@ -56,12 +56,12 @@ public class Discordo implements ModInitializer {
             config.discordToken.get(),
             EnumSet.of(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
         )
-            .addEventListeners(new MessageReceiveListener(discordToMcLink, jda))
+            .addEventListeners(new MessageReceiveListener(discordToMcLink))
             .build();
 
         jda.awaitReady();
 
-        LOGGER.info("Logged into Discord as " + jda.getSelfUser().getAsTag());
+        LOGGER.info("Logged into Discord as {}", jda.getSelfUser().getAsTag());
 
         channel = jda.getTextChannelById(config.channelId.get());
         if(channel == null) {
