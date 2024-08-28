@@ -31,6 +31,7 @@ repositories {
         name = 'henkelmax.public'
         url = 'https://maven.maxhenkel.de/repository/public'
     }
+    mavenCentral()
 }
 
 dependencies {
@@ -44,6 +45,9 @@ dependencies {
 
     // Config builder
     implementation 'de.maxhenkel.configbuilder:configbuilder:2.0.1'
+
+    // Discord
+    implementation "net.dv8tion:JDA:5.1.0"
 }
 
 processResources {
