@@ -3,13 +3,12 @@ package dev.toasted.discordo;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public class DiscordBot {
+public class DiscordToMinecraftLink {
     public MessageReceivedEvent messageReceivedEvent;
     public Boolean hasReceivedMessage = false;
 

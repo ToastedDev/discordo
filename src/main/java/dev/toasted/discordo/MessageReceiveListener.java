@@ -1,27 +1,29 @@
 package dev.toasted.discordo;
 
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 public class MessageReceiveListener extends ListenerAdapter {
-    private final DiscordBot discordBot;
+    private final DiscordToMinecraftLink discordToMcLink;
+    private final JDA jda;
 
-    public MessageReceiveListener(DiscordBot discordBot) {
-        this.discordBot = discordBot;
+    public MessageReceiveListener(DiscordToMinecraftLink discordToMcLink, JDA jda) {
+        this.discordToMcLink = discordToMcLink;
+        this.jda = jda;
     }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if(event.isWebhookMessage()) return;
-        // TODO: only check if the author is the logged in bot
-        if(event.getAuthor().isBot()) return;
+        if(this.jda.getSelfUser().getId().equals(event.getAuthor().getId())) return;
         if((event.getMessage().getType() != MessageType.DEFAULT) && (event.getMessage().getType() != MessageType.INLINE_REPLY)) return;
 
         Discordo.LOGGER.info("Recieved message: " + event.getMessage().getContentRaw());
 
-        this.discordBot.messageReceivedEvent = event;
-        this.discordBot.hasReceivedMessage = true;
+        this.discordToMcLink.messageReceivedEvent = event;
+        this.discordToMcLink.hasReceivedMessage = true;
     }
 }
