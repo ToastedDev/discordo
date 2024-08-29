@@ -74,12 +74,12 @@ public class Config {
         public String leave = "⬅️ %name% has left the game";
 
         @TomlComment({"The message that will be sent when the server is starting"})
-        public String serverStarting = "Server starting...";
+        public String serverStarting = "🔄️ Server starting...";
 
         @TomlComment({"The message that will be sent when the server has started"})
-        public String serverStarted = "Server has started!";
+        public String serverStarted = "✅ Server has started!";
 
         @TomlComment({"The message that will be sent when the server stops"})
-        public String serverStopped = "Server has stopped.";
+        public String serverStopped = "🛑 Server has stopped.";
     }
 }
