@@ -5,22 +5,22 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.minecraft.entity.player.PlayerEntity;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 
 public class Discordo implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(Constants.ModId);
@@ -47,6 +47,7 @@ public class Discordo implements ModInitializer {
 
     public static final DiscordToMinecraftLink discordToMcLink = new DiscordToMinecraftLink();
     private Message serverStartMessage;
+    private static MinecraftServer server;
 
     public void initializeDiscord() throws InterruptedException {
         // TODO: add slash commands
@@ -54,8 +55,17 @@ public class Discordo implements ModInitializer {
             config.discordToken,
             EnumSet.of(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
         )
-            .addEventListeners(new MessageReceiveListener(discordToMcLink))
+            .addEventListeners(new DiscordEventListeners(discordToMcLink))
             .build();
+
+        CommandListUpdateAction commands = jda.updateCommands();
+
+        commands.addCommands(
+            Commands.slash("list", "List all players currently online on the server")
+                .setGuildOnly(true)
+        );
+
+        commands.queue();
 
         jda.awaitReady();
 
@@ -112,6 +122,7 @@ public class Discordo implements ModInitializer {
         });
 
         ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
+            Discordo.server = server;
             serverStartMessage =
                 channel
                     .sendMessage(config.messages.serverStarting)
@@ -135,6 +146,10 @@ public class Discordo implements ModInitializer {
         });
 
         ServerTickEvents.START_SERVER_TICK.register(discordToMcLink::serverTick);
+    }
+
+    public static MinecraftServer getServer() {
+        return server;
     }
 
     private Webhook getWebhook(TextChannel channel) {
