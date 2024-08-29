@@ -94,7 +94,7 @@ public class Discordo implements ModInitializer {
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
             if(!(entity instanceof PlayerEntity)) return;
 
-            String message = config.messages.death.replace("%deathMessage%", source.getDeathMessage(entity).getString())
+            String message = config.messages.death.replace("%deathMessage%", source.getDeathMessage(entity).getString());
 
             if(config.webhookEnabled) {
                 webhook
