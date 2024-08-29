@@ -34,7 +34,6 @@ public class Discordo implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        Discordo.INSTANCE = this;
         if(config.discordToken.isEmpty() || config.discordToken.equals("REPLACE THIS WITH YOUR BOT TOKEN")) {
             LOGGER.error("No Discord token specified. Please specify your bot's Discord token in config/discordo/config.toml.");
         } else {
@@ -61,6 +60,7 @@ public class Discordo implements ModInitializer {
         jda.awaitReady();
 
         LOGGER.info("Logged into Discord as {}", jda.getSelfUser().getAsTag());
+        Discordo.INSTANCE = this;
 
         channel = jda.getTextChannelById(config.channelId);
         if(channel == null) {
