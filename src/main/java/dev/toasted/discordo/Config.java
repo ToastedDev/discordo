@@ -62,24 +62,24 @@ public class Config {
         // TODO: add configuration for chat
 
         @TomlComment({"The message that will be sent when a player receives an advancement"})
-        public String advancement = "🏅 %name% has made the advancement **%advancement.name%**\n-# %advancement.description%";
+        public String advancement = ":medal: %name% has made the advancement **%advancement.name%**\n-# %advancement.description%";
 
         @TomlComment({"The message that will be sent when a player dies"})
-        public String death = "🪦 %deathMessage%";
+        public String death = ":headstone: %deathMessage%";
 
         @TomlComment({"The message that will be sent when a player joins the server"})
-        public String join = "➡️ %name% has joined the game";
+        public String join = ":arrow_right: %name% has joined the game";
 
         @TomlComment({"The message that will be sent when a player leaves the server"})
-        public String leave = "⬅️ %name% has left the game";
+        public String leave = ":arrow_left: %name% has left the game";
 
         @TomlComment({"The message that will be sent when the server is starting"})
-        public String serverStarting = "🔄️ Server starting...";
+        public String serverStarting = ":arrows_counterclockwise: Server starting...";
 
         @TomlComment({"The message that will be sent when the server has started"})
-        public String serverStarted = "✅ Server has started!";
+        public String serverStarted = ":white_check_mark: Server has started!";
 
         @TomlComment({"The message that will be sent when the server stops"})
-        public String serverStopped = "🛑 Server has stopped.";
+        public String serverStopped = ":octagonal_sign: Server has stopped.";
     }
 }
