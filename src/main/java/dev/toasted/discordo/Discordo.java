@@ -1,5 +1,6 @@
 package dev.toasted.discordo;
 
+import dev.toasted.discordo.command.ReloadConfigCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -25,12 +27,19 @@ import java.util.List;
 public class Discordo implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(Constants.ModId);
     public static Discordo INSTANCE;
-    public final Config config = Config.loadConfig();
+    public static Config config;
+    private static JDA jda;
+
+    static {
+        try {
+            config = Config.loadConfig();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static TextChannel channel;
     public static Webhook webhook;
-
-    public Discordo() throws IOException {
-    }
 
     @Override
     public void onInitialize() {
@@ -38,6 +47,7 @@ public class Discordo implements ModInitializer {
             LOGGER.error("No Discord token specified. Please specify your bot's Discord token in config/discordo/config.toml.");
         } else {
             try {
+                registerMcCommands();
                 initializeDiscord();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -45,32 +55,44 @@ public class Discordo implements ModInitializer {
         }
     }
 
+    public static void reloadConfig() throws InterruptedException, IOException {
+        Discordo.config = Config.loadConfig();
+
+        if(config.discordToken.isEmpty() || config.discordToken.equals("REPLACE THIS WITH YOUR BOT TOKEN")) {
+            LOGGER.error("No Discord token specified. Please specify your bot's Discord token in config/discordo/config.toml.");
+        } else {
+            jda.shutdown();
+            jda = null;
+            Discordo.initJda();
+        }
+    }
+
+    private void registerMcCommands() {
+        CommandRegistrationCallback.EVENT.register(ReloadConfigCommand::register);
+    }
+
     public static final DiscordToMinecraftLink discordToMcLink = new DiscordToMinecraftLink();
     private Message serverStartMessage;
     private static MinecraftServer server;
 
-    public void initializeDiscord() throws InterruptedException {
-        // TODO: add slash commands
-        JDA jda = JDABuilder.createLight(
-            config.discordToken,
-            EnumSet.of(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
-        )
-            .addEventListeners(new DiscordEventListeners(discordToMcLink))
-            .build();
+    private static void initJda() throws InterruptedException {
+        jda = JDABuilder.createLight(
+                        config.discordToken,
+                        EnumSet.of(GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
+                )
+                .addEventListeners(new DiscordEventListeners(discordToMcLink))
+                .build();
 
         CommandListUpdateAction commands = jda.updateCommands();
 
         commands.addCommands(
-            Commands.slash("list", "List all players currently online on the server")
-                .setGuildOnly(true)
+                Commands.slash("list", "List all players currently online on the server")
+                        .setGuildOnly(true)
         );
 
         commands.queue();
 
         jda.awaitReady();
-
-        LOGGER.info("Logged into Discord as {}", jda.getSelfUser().getAsTag());
-        Discordo.INSTANCE = this;
 
         channel = jda.getTextChannelById(config.channelId);
         if(channel == null) {
@@ -84,6 +106,13 @@ public class Discordo implements ModInitializer {
                 webhook = channel.createWebhook("Minecraft Chat Link").complete();
             }
         }
+    }
+
+    public void initializeDiscord() throws InterruptedException {
+        initJda();
+
+        LOGGER.info("Logged into Discord as {}", jda.getSelfUser().getAsTag());
+        Discordo.INSTANCE = this;
 
         ServerMessageEvents.CHAT_MESSAGE.register((message, sender, parameters) -> {
             if(config.webhookEnabled) {
@@ -152,7 +181,7 @@ public class Discordo implements ModInitializer {
         return server;
     }
 
-    private Webhook getWebhook(TextChannel channel) {
+    private static Webhook getWebhook(TextChannel channel) {
         List<Webhook> webhooks = channel.retrieveWebhooks().complete();
         for(Webhook webhook: webhooks) {
             if(webhook.getName().equals("Minecraft Chat Link")) {
