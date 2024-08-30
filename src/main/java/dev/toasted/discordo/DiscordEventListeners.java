@@ -32,8 +32,13 @@ public class DiscordEventListeners extends ListenerAdapter {
 
         switch(event.getName()) {
             case "list": {
-                StringBuilder message = new StringBuilder("Currently online players:\n");
                 List<ServerPlayerEntity> players = Discordo.getServer().getPlayerManager().getPlayerList();
+                StringBuilder message = new StringBuilder("Currently online players ")
+                    .append("(")
+                    .append(Discordo.getServer().getCurrentPlayerCount())
+                    .append("/")
+                    .append(Discordo.getServer().getMaxPlayerCount())
+                    .append("):\n");
 
                 if(players.isEmpty()) {
                     message = new StringBuilder("No players currently online.");
