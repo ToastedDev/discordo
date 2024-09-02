@@ -20,6 +20,7 @@ public class DiscordEventListeners extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if(event.isWebhookMessage()) return;
         if(event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId())) return;
+        if(event.getMessage().getChannelId() != Discordo.config.channelId) return;
         if((event.getMessage().getType() != MessageType.DEFAULT) && (event.getMessage().getType() != MessageType.INLINE_REPLY)) return;
 
         this.discordToMcLink.messageReceivedEvent = event;
