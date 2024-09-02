@@ -21,7 +21,7 @@ public class NetworkHandlerMixin {
         if(Discordo.INSTANCE == null) return;
 
         String message = Discordo.INSTANCE.config.messages.leave
-            .replace("%name", player.getName().getString());
+            .replace("%name%", player.getName().getString());
 
         if(Discordo.INSTANCE.config.webhook.enabled) {
             Discordo.INSTANCE.webhook
