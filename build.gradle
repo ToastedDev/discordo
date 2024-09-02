@@ -21,6 +21,10 @@ loom {
     }
 }
 
+configurations {
+    includeInJar
+}
+
 repositories {
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
@@ -46,9 +50,11 @@ dependencies {
 
     // TOML (for config)
     implementation "de.erdbeerbaerlp:toml4j:2073e86"
+    includeInJar "de.erdbeerbaerlp:toml4j:2073e86"
 
     // Discord
     implementation "net.dv8tion:JDA:5.1.0"
+    includeInJar "net.dv8tion:JDA:5.1.0"
 }
 
 processResources {
@@ -91,6 +97,8 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
     }
+    from(configurations.named("includeInJar").get().collect { zipTree(it) })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 // configure the maven publication
