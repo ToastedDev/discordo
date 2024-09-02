@@ -15,33 +15,34 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PlayerAdvancementTracker.class)
 public class AdvancementMixin {
     @Shadow
-    ServerPlayerEntity owner;
+    private ServerPlayerEntity owner;
 
     @Inject(method = "grantCriterion", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancement/PlayerAdvancementTracker;onStatusUpdate(Lnet/minecraft/advancement/AdvancementEntry;)V"))
     public void advancement(AdvancementEntry advancementEntry, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if(Discordo.INSTANCE == null) return;
+        if(!Discordo.isReady()) return;
+
         final Advancement advancement = advancementEntry.value();
         if(advancement != null && advancement.display().isPresent() && advancement.display().get().shouldAnnounceToChat()) {
-            String message = Discordo.INSTANCE.config.messages.advancement
+            String message = Discordo.config.messages.advancement
                 .replace("%name%", owner.getName().getString())
                 .replace("%advancement.name%", advancement.display().get().getTitle().getString())
                 .replace("%advancement.description%", advancement.display().get().getDescription().getString());
-            if(Discordo.INSTANCE.config.webhook.enabled) {
-                Discordo.INSTANCE.webhook
+            if(Discordo.config.webhook.enabled) {
+                Discordo.webhook
                     .sendMessage(message)
                     .setUsername(
-                        Discordo.INSTANCE.config.webhook.name
+                        Discordo.config.webhook.name
                             .replace("%name%", owner.getName().getString())
                     )
                     .setAvatarUrl(
-                        Discordo.INSTANCE.config.webhook.avatarUrl
+                        Discordo.config.webhook.avatarUrl
                             .replace("%name%", owner.getName().getString())
                             .replace("%uuid%", owner.getUuidAsString())
                     )
                     .setAllowedMentions(Constants.AllowedMentions)
                     .queue();
             } else {
-                Discordo.INSTANCE.channel
+                Discordo.channel
                     .sendMessage(message)
                     .setAllowedMentions(Constants.AllowedMentions)
                     .queue();

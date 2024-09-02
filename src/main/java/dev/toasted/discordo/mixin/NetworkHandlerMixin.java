@@ -18,27 +18,27 @@ public class NetworkHandlerMixin {
 
     @Inject(at = @At(value = "HEAD"), method = "onDisconnected")
     private void onPlayerLeave(DisconnectionInfo info, CallbackInfo ci) {
-        if(Discordo.INSTANCE == null) return;
+        if(!Discordo.isReady()) return;
 
-        String message = Discordo.INSTANCE.config.messages.leave
+        String message = Discordo.config.messages.leave
             .replace("%name%", player.getName().getString());
 
-        if(Discordo.INSTANCE.config.webhook.enabled) {
-            Discordo.INSTANCE.webhook
+        if(Discordo.config.webhook.enabled) {
+            Discordo.webhook
                 .sendMessage(message)
                 .setUsername(
-                    Discordo.INSTANCE.config.webhook.name
+                    Discordo.config.webhook.name
                         .replace("%name%", player.getName().getString())
                 )
                 .setAvatarUrl(
-                    Discordo.INSTANCE.config.webhook.avatarUrl
+                    Discordo.config.webhook.avatarUrl
                         .replace("%name%", player.getName().getString())
                         .replace("%uuid%", player.getUuidAsString())
                 )
                 .setAllowedMentions(Constants.AllowedMentions)
                 .queue();
         } else {
-            Discordo.INSTANCE.channel
+            Discordo.channel
                 .sendMessage(message)
                 .setAllowedMentions(Constants.AllowedMentions)
                 .queue();

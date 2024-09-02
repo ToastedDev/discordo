@@ -26,7 +26,7 @@ import java.util.List;
 
 public class Discordo implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(Constants.ModId);
-    public static Discordo INSTANCE;
+    private static Boolean ready = false;
     public static Config config;
     private static JDA jda;
 
@@ -112,7 +112,7 @@ public class Discordo implements ModInitializer {
         initJda();
 
         LOGGER.info("Logged into Discord as {}", jda.getSelfUser().getAsTag());
-        Discordo.INSTANCE = this;
+        ready = true;
 
         ServerMessageEvents.CHAT_MESSAGE.register((message, sender, parameters) -> {
             if(config.webhook.enabled) {
@@ -193,6 +193,10 @@ public class Discordo implements ModInitializer {
 
     public static MinecraftServer getServer() {
         return server;
+    }
+
+    public static Boolean isReady() {
+        return ready;
     }
 
     private static Webhook getWebhook(TextChannel channel) {

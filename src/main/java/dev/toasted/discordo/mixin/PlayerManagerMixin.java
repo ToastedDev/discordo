@@ -15,27 +15,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class PlayerManagerMixin {
     @Inject(at = @At(value = "TAIL"), method = "onPlayerConnect")
     private void onPlayerJoin(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo info) {
-        if(Discordo.INSTANCE == null) return;
+        if(!Discordo.isReady()) return;
 
-        String message = Discordo.INSTANCE.config.messages.join
+        String message = Discordo.config.messages.join
             .replace("%name%", player.getName().getString());
 
-        if(Discordo.INSTANCE.config.webhook.enabled) {
-            Discordo.INSTANCE.webhook
+        if(Discordo.config.webhook.enabled) {
+            Discordo.webhook
                 .sendMessage(message)
                 .setUsername(
-                    Discordo.INSTANCE.config.webhook.name
+                    Discordo.config.webhook.name
                         .replace("%name%", player.getName().getString())
                 )
                 .setAvatarUrl(
-                    Discordo.INSTANCE.config.webhook.avatarUrl
+                    Discordo.config.webhook.avatarUrl
                         .replace("%name%", player.getName().getString())
                         .replace("%uuid%", player.getUuidAsString())
                 )
                 .setAllowedMentions(Constants.AllowedMentions)
                 .queue();
         } else {
-            Discordo.INSTANCE.channel
+            Discordo.channel
                 .sendMessage(message)
                 .setAllowedMentions(Constants.AllowedMentions)
                 .queue();
