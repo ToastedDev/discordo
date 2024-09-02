@@ -86,8 +86,8 @@ public class Discordo implements ModInitializer {
         CommandListUpdateAction commands = jda.updateCommands();
 
         commands.addCommands(
-                Commands.slash("list", "List all players currently online on the server")
-                        .setGuildOnly(true)
+            Commands.slash("list", "List all players currently online on the server")
+                .setGuildOnly(true)
         );
 
         commands.queue();
@@ -100,7 +100,7 @@ public class Discordo implements ModInitializer {
             return;
         }
 
-        if(config.webhookEnabled) {
+        if(config.webhook.enabled) {
             webhook = getWebhook(channel);
             if(webhook == null) {
                 webhook = channel.createWebhook("Minecraft Chat Link").complete();
@@ -115,11 +115,18 @@ public class Discordo implements ModInitializer {
         Discordo.INSTANCE = this;
 
         ServerMessageEvents.CHAT_MESSAGE.register((message, sender, parameters) -> {
-            if(config.webhookEnabled) {
+            if(config.webhook.enabled) {
                 webhook
                     .sendMessage(message.getContent().getString())
-                    .setUsername(sender.getName().getString())
-                    .setAvatarUrl("https://crafthead.net/avatar/" + sender.getUuidAsString())
+                    .setUsername(
+                        config.webhook.name
+                            .replace("%name%", sender.getName().getString())
+                    )
+                    .setAvatarUrl(
+                        config.webhook.avatarUrl
+                            .replace("%name%", sender.getName().getString())
+                            .replace("%uuid%", sender.getUuidAsString())
+                    )
                     .setAllowedMentions(Constants.AllowedMentions)
                     .queue();
             } else {
@@ -135,11 +142,18 @@ public class Discordo implements ModInitializer {
 
             String message = config.messages.death.replace("%deathMessage%", source.getDeathMessage(entity).getString());
 
-            if(config.webhookEnabled) {
+            if(config.webhook.enabled) {
                 webhook
                     .sendMessage(message)
-                    .setUsername(entity.getName().getString())
-                    .setAvatarUrl("https://crafthead.net/avatar/" + entity.getUuidAsString())
+                    .setUsername(
+                        config.webhook.name
+                            .replace("%name%", entity.getName().getString())
+                    )
+                    .setAvatarUrl(
+                        config.webhook.avatarUrl
+                            .replace("%name%", entity.getName().getString())
+                            .replace("%uuid%", entity.getUuidAsString())
+                    )
                     .setAllowedMentions(Constants.AllowedMentions)
                     .queue();
             } else {

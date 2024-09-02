@@ -52,11 +52,23 @@ public class Config {
     @TomlComment({"The ID of the channel where Minecraft messages will be sent and vice versa"})
     public String channelId = "00000000";
 
-    @TomlComment({"Whether or not messages should be sent through a webhook with the player's name and skin"})
-    public Boolean webhookEnabled = false;
+
+    @TomlComment({"Configure sending messages through webhooks"})
+    public Webhook webhook = new Webhook();
 
     @TomlComment({"Configure the messages that are sent to Discord"})
     public Messages messages = new Messages();
+
+    public static class Webhook {
+        @TomlComment({"Whether or not messages should be sent through a webhook"})
+        public Boolean enabled = false;
+
+        @TomlComment({"The template to use when setting the name of the webhook"})
+        public String name = "%name%";
+
+        @TomlComment({"The template to use when setting the avatar of the webhook"})
+        public String avatarUrl = "https://crafthead.net/avatar/%name%";
+    }
 
     public static class Messages {
         // TODO: add configuration for chat

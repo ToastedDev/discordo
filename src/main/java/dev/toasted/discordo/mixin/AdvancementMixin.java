@@ -26,11 +26,18 @@ public class AdvancementMixin {
                 .replace("%name%", owner.getName().getString())
                 .replace("%advancement.name%", advancement.display().get().getTitle().getString())
                 .replace("%advancement.description%", advancement.display().get().getDescription().getString());
-            if(Discordo.INSTANCE.config.webhookEnabled) {
+            if(Discordo.INSTANCE.config.webhook.enabled) {
                 Discordo.INSTANCE.webhook
                     .sendMessage(message)
-                    .setUsername(owner.getName().getString())
-                    .setAvatarUrl("https://crafthead.net/avatar/" + owner.getUuidAsString())
+                    .setUsername(
+                        Discordo.INSTANCE.config.webhook.name
+                            .replace("%name%", owner.getName().getString())
+                    )
+                    .setAvatarUrl(
+                        Discordo.INSTANCE.config.webhook.avatarUrl
+                            .replace("%name%", owner.getName().getString())
+                            .replace("%uuid%", owner.getUuidAsString())
+                    )
                     .setAllowedMentions(Constants.AllowedMentions)
                     .queue();
             } else {

@@ -20,11 +20,18 @@ public class PlayerManagerMixin {
         String message = Discordo.INSTANCE.config.messages.join
             .replace("%name%", player.getName().getString());
 
-        if(Discordo.INSTANCE.config.webhookEnabled) {
+        if(Discordo.INSTANCE.config.webhook.enabled) {
             Discordo.INSTANCE.webhook
                 .sendMessage(message)
-                .setUsername(player.getName().getString())
-                .setAvatarUrl("https://crafthead.net/avatar/" + player.getUuidAsString())
+                .setUsername(
+                    Discordo.INSTANCE.config.webhook.name
+                        .replace("%name%", player.getName().getString())
+                )
+                .setAvatarUrl(
+                    Discordo.INSTANCE.config.webhook.avatarUrl
+                        .replace("%name%", player.getName().getString())
+                        .replace("%uuid%", player.getUuidAsString())
+                )
                 .setAllowedMentions(Constants.AllowedMentions)
                 .queue();
         } else {
