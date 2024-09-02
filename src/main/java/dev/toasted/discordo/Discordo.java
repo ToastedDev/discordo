@@ -88,7 +88,7 @@ public class Discordo implements ModInitializer {
         commands.addCommands(
             Commands.slash("list", "List all players currently online on the server")
                 .setGuildOnly(true)
-        );
+        ).queue();
 
         commands.queue();
 
