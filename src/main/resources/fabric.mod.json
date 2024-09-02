@@ -3,8 +3,8 @@
   "id": "discordo",
   "version": "${version}",
   "name": "Discordo",
-  "description": "",
-  "authors": [],
+  "description": "A simple, yet clean, server-side mod to link Discord and Minecraft.",
+  "authors": ["ToastedToast"],
   "contact": {
     "issues": "https://github.com/ToastedDev/discordo/issues",
     "sources": "https://github.com/ToastedDev/discordo"
@@ -13,16 +13,12 @@
   "icon": "assets/discordo/icon.png",
   "environment": "server",
   "entrypoints": {
-    "main": [
+    "server": [
       "dev.toasted.discordo.Discordo"
     ]
   },
   "mixins": [
-    "discordo.mixins.json",
-    {
-      "config": "discordo.client.mixins.json",
-      "environment": "client"
-    }
+    "discordo.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",

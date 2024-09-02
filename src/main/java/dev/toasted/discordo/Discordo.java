@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 
-public class Discordo implements ModInitializer {
+public class Discordo implements DedicatedServerModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(Constants.ModId);
     private static Boolean ready = false;
     public static Config config;
@@ -42,7 +42,7 @@ public class Discordo implements ModInitializer {
     public static Webhook webhook;
 
     @Override
-    public void onInitialize() {
+    public void onInitializeServer() {
         if(config.discordToken.isEmpty() || config.discordToken.equals("REPLACE THIS WITH YOUR BOT TOKEN")) {
             LOGGER.error("No Discord token specified. Please specify your bot's Discord token in config/discordo/config.toml.");
         } else {
